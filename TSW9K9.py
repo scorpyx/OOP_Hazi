@@ -1,13 +1,14 @@
 from abc import ABC
 import datetime
 
+
 class Szoba(ABC):
 
     def __init__(self, ar, szobaszam, agyakszama):
         self.ar = ar
         self.szobaszam = szobaszam
         self.agyakszama = agyakszama
-    
+
     def __repr__(self) -> str:
         return "Szoba #{}. {} ágyas. Ár: {}".format(self.szobaszam, self.agyakszama, self.ar)
 
@@ -17,10 +18,12 @@ class EgyagyasSzoba(Szoba):
         super().__init__(ar, szobaszam, 1)
         self.bovitheto = bovitheto
 
+
 class KetagyasSzoba(Szoba):
     def __init__(self, ar, szobaszam, babaagy=False):
         super().__init__(ar, szobaszam, 2)
         self.babaagy = babaagy
+
 
 class Szalloda:
 
@@ -31,16 +34,15 @@ class Szalloda:
 
     def foglalas(self, foglalas):
         szoba = self.ervenyes_szoba_ellenorzes(foglalas.szoba_szam)
-        
+
         if self.foglalt_e_a_szoba(foglalas.szoba_szam, foglalas.datum) < 0:
             self.foglalt_szobak[foglalas.datum].append(foglalas.szoba_szam)
             return szoba.ar
         raise ValueError("A szoba már foglalt ezen a napon!")
-        
 
     def lemondas(self, foglalas):
         self.ervenyes_szoba_ellenorzes(foglalas.szoba_szam)
-        
+
         foglalas_index = self.foglalt_e_a_szoba(foglalas.szoba_szam, foglalas.datum)
         if foglalas_index >= 0:
             del self.foglalt_szobak[foglalas.datum][foglalas_index]
@@ -49,7 +51,7 @@ class Szalloda:
 
     def osszes_foglalas(self):
         return self.foglalt_szobak
-    
+
     def foglalasok_adott_napon(self, datum):
         foglalt_szobak = []
         if datum not in self.foglalt_szobak:
@@ -57,7 +59,7 @@ class Szalloda:
         else:
             foglalt_szobak = self.foglalt_szobak[datum]
         return foglalt_szobak
-    
+
     def szabad_szobak(self, datum):
         foglalt_szobak = self.foglalasok_adott_napon(datum)
         if len(foglalt_szobak) == 0:
@@ -105,6 +107,7 @@ def datum_keres():
         except ValueError:
             print("Érvénytelen dátum!")
 
+
 def print_foglalhato_szobak(szalloda, datum):
     szabad_szobak = szalloda.szabad_szobak(datum)
     if len(szabad_szobak) == 0:
@@ -114,6 +117,7 @@ def print_foglalhato_szobak(szalloda, datum):
         for szoba in szabad_szobak:
             print(szoba)
 
+
 def print_foglalt_szobak(szalloda, datum):
     foglalt_szobak = szalloda.foglalasok_adott_napon(datum)
     if len(foglalt_szobak) == 0:
@@ -122,6 +126,7 @@ def print_foglalt_szobak(szalloda, datum):
         print("Melyik szobát szeretné lemondani?")
         for szoba_szam in foglalt_szobak:
             print("Szoba #", szoba_szam)
+
 
 def szoba_foglalas(szalloda, datum):
     while True:
@@ -134,7 +139,7 @@ def szoba_foglalas(szalloda, datum):
                 print(str(e))
         except:
             print("Nem számot adott meg.")
-        
+
 
 def szoba_lemondas(szalloda, datum):
     while True:
@@ -148,22 +153,19 @@ def szoba_lemondas(szalloda, datum):
                 print(str(e))
         except:
             print("Nem számot adott meg.")
-        
-    
+
 
 szalloda = Szalloda([
-        EgyagyasSzoba(100, 1),
-        KetagyasSzoba(180, 2),
-        KetagyasSzoba(200, 3, True)
-    ], "Szuper")
+    EgyagyasSzoba(100, 1),
+    KetagyasSzoba(180, 2),
+    KetagyasSzoba(200, 3, True)
+], "Szuper")
 
 szalloda.foglalas(Foglalas(1, datetime.date.today() + datetime.timedelta(days=1)))
 szalloda.foglalas(Foglalas(2, datetime.date.today() + datetime.timedelta(days=1)))
 szalloda.foglalas(Foglalas(1, datetime.date.today() + datetime.timedelta(days=3)))
 szalloda.foglalas(Foglalas(1, datetime.date.today() + datetime.timedelta(days=4)))
 szalloda.foglalas(Foglalas(3, datetime.date.today() + datetime.timedelta(days=5)))
-
-
 
 print("Üdvözöljük a {} szállodában".format(szalloda.nev))
 while True:
@@ -183,9 +185,9 @@ while True:
     elif muvelet == "m":
         for datum, szobaszamok in szalloda.osszes_foglalas().items():
             if len(szobaszamok) > 0:
-                print("{} napon a kövektkező szobák foglaltak: {}".format(datum, ", ".join(map(lambda s: str(s), szobaszamok))))
+                print("{} napon a kövektkező szobák foglaltak: {}".format(datum, ", ".join(
+                    map(lambda s: str(s), szobaszamok))))
     elif muvelet == "k":
         break
     else:
         print("Érvénytelen művelet!")
- 
